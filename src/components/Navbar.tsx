@@ -1,4 +1,5 @@
-import { FC, useState } from "react";
+import { FC, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { AiOutlineShoppingCart, AiOutlineMenu } from "react-icons/ai";
 import { BsSearch } from "react-icons/bs";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
@@ -10,6 +11,8 @@ import { FaUser } from "react-icons/fa";
 import CustomPopup from "./CustomPopup";
 import { updateDarkMode } from "../redux/features/homeSlice";
 import { MdOutlineDarkMode, MdOutlineLightMode } from "react-icons/md";
+import { Product } from "../types/Product";
+
 
 const Navbar: FC = () => {
   const dispatch = useAppDispatch();
@@ -20,6 +23,21 @@ const Navbar: FC = () => {
   const isDarkMode = useAppSelector((state) => state.homeReducer.isDarkMode);
   const { requireAuth } = useAuth();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState<Product[]>([]);
+
+  const clearSearch = useCallback(() => {
+    setSearchTerm("");
+    setSearchResults([]);
+  }, []);
+
+  const handleProductClick = useCallback((productId: number) => {
+    clearSearch();
+    navigate(`/product/${productId}`);
+  }, [clearSearch, navigate]);
+
 
 
   const showCart = () => {
@@ -28,6 +46,17 @@ const Navbar: FC = () => {
 
   const toggleDrawer = () => {
     setIsDrawerOpen(!isDrawerOpen);
+  };
+
+  const handleSearch = async () => {
+    if (searchTerm.trim() === "") return;
+    try {
+      const response = await fetch(`https://dummyjson.com/products/search?q=${searchTerm}`);
+      const data = await response.json();
+      setSearchResults(data.products);
+    } catch (error) {
+      console.error("Error fetching search results:", error);
+    }
   };
 
   return (
@@ -46,10 +75,17 @@ const Navbar: FC = () => {
               type="text"
               placeholder="Search for a product..."
               className="border-2 border-blue-500 px-6 py-2 w-full dark:text-white dark:bg-slate-800"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
             />
-            <div className="bg-blue-500 text-white text-[26px] grid place-items-center px-4">
+            <div
+              className="bg-blue-500 text-white text-[26px] grid place-items-center px-4 cursor-pointer"
+              onClick={handleSearch}
+            >
               <BsSearch />
             </div>
+
           </div>
           <div className="hidden lg:flex gap-4 md:gap-8 items-center dark:text-white">
             <Link
@@ -139,9 +175,8 @@ const Navbar: FC = () => {
       </div>
       {/* Mobile Drawer */}
       <div
-        className={`lg:hidden fixed top-0 right-0 h-full w-64 bg-white dark:bg-slate-800 shadow-lg transform transition-transform duration-300 ease-in-out ${
-          isDrawerOpen ? "translate-x-0" : "translate-x-full"
-        }`}
+        className={`lg:hidden fixed top-0 right-0 h-full w-64 bg-white dark:bg-slate-800 shadow-lg transform transition-transform duration-300 ease-in-out ${isDrawerOpen ? "translate-x-0" : "translate-x-full"
+          }`}
       >
         <div className="p-4">
           <div className="flex justify-end">
@@ -224,6 +259,25 @@ const Navbar: FC = () => {
           </div>
         </div>
       </div>
+      {/* Display search results */}
+      {searchResults.length > 0 && (
+        <div className="container mx-auto px-4 mt-4">
+          <h2 className="text-2xl font-bold mb-2 dark:text-white">Search Results:</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {searchResults.map((product) => (
+              <div
+                key={product.id}
+                onClick={() => handleProductClick(product.id)}
+                className="border p-4 rounded dark:bg-slate-700 dark:text-white hover:shadow-md transition-shadow duration-200 cursor-pointer"
+              >
+                <h3 className="font-bold">{product.title}</h3>
+                <p className="line-clamp-2">{product.description}</p>
+                <p className="font-bold mt-2">${product.price}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
