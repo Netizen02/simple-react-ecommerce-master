@@ -186,8 +186,12 @@ const SingleProduct: FC = () => {
             </button>
           </div>
         </div>
-        {product && <Reviews id={product?.id} />}
       </div>
+      {product && (
+        <div className="mt-8 px-4">
+          <Reviews id={product.id} />
+        </div>
+      )}
       <hr className="mt-4" />
       <ProductList title="Similar Products" products={similar} />
       <br />
