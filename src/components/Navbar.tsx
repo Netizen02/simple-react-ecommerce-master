@@ -163,7 +163,7 @@ const Navbar: FC = () => {
           </div>
         </div>
         <div className="lg:hidden flex items-center gap-4">
-          <div
+          {/* <div
             className="text-gray-500 text-[32px] relative hover:cursor-pointer hover:opacity-80"
             onClick={showCart}
             data-test="cart-btn"
@@ -175,7 +175,7 @@ const Navbar: FC = () => {
             >
               {cartCount}
             </div>
-          </div>
+          </div> */}
           <AiOutlineMenu
             className="text-gray-500 dark:text-white text-3xl cursor-pointer"
             onClick={toggleDrawer}
