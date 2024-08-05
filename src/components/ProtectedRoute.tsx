@@ -1,10 +1,8 @@
 import { FC } from "react";
-import { Outlet, Navigate } from "react-router-dom";
-import { useAppSelector } from "../redux/hooks";
+import { Outlet } from "react-router-dom";
 
 const ProtectedRoute: FC = () => {
-  const isLoggedin = useAppSelector((state) => state.authReducer.isLoggedIn);
-  return isLoggedin ? <Outlet /> : <Navigate to="/" />;
+  return <Outlet />;
 };
 
 export default ProtectedRoute;

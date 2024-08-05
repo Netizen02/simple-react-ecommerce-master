@@ -1,25 +1,17 @@
 import { FC, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { useAppSelector } from "../redux/hooks";
 import {
   MdFavoriteBorder,
   MdOutlineAccountCircle,
-  MdOutlineLogout,
 } from "react-icons/md";
-import { doLogout } from "../redux/features/authSlice";
 import { Link } from "react-router-dom";
 
 const CustomPopup: FC = () => {
-  const dispatch = useAppDispatch();
   const [isVisible, setVisible] = useState(false);
   const username = useAppSelector((state) => state.authReducer.username);
 
   const handlePopup = () => {
     setVisible((v) => !v);
-  };
-
-  const handleLogout = () => {
-    dispatch(doLogout());
-    hidePopup();
   };
 
   const hidePopup = () => {
@@ -63,18 +55,6 @@ const CustomPopup: FC = () => {
                   <Link to="/wishlist" onClick={hidePopup}>
                     Wishlist
                   </Link>
-                </td>
-              </tr>
-              <tr>
-                <td className="text-center">
-                  <MdOutlineLogout />
-                </td>
-                <td
-                  className="hover:underline cursor-pointer text-lg pl-2"
-                  onClick={handleLogout}
-                  data-test="logout-btn"
-                >
-                  Logout
                 </td>
               </tr>
             </tbody>

@@ -10,7 +10,6 @@ import { AiOutlineShoppingCart } from "react-icons/ai";
 import { FaHandHoldingDollar } from "react-icons/fa6";
 import ProductList from "../components/ProductList";
 import Reviews from "../components/Reviews";
-import useAuth from "../hooks/useAuth";
 import { MdFavoriteBorder } from "react-icons/md";
 import { addToWishlist } from "../redux/features/productSlice";
 
@@ -25,7 +24,6 @@ const SingleProduct: FC = () => {
   const [selectedImg, setSelectedImg] = useState<string>();
   const [sCategory, setScategory] = useState<string>();
   const [similar, setSimilar] = useState<Product[]>([]);
-  const { requireAuth } = useAuth();
 
   useEffect(() => {
     const fetchProductDetails = () => {
@@ -58,52 +56,46 @@ const SingleProduct: FC = () => {
   }, [productID, sCategory]);
 
   const addCart = () => {
-    requireAuth(() => {
-      if (product)
-        dispatch(
-          addToCart({
-            id: product.id,
-            price: product.price,
-            title: product.title,
-            category: product.category,
-            rating: product.rating,
-            thumbnail: product.thumbnail,
-            discountPercentage: product.discountPercentage,
-          })
-        );
-      toast.success("item added to cart successfully", {
-        duration: 3000,
-      });
+    if (product)
+      dispatch(
+        addToCart({
+          id: product.id,
+          price: product.price,
+          title: product.title,
+          category: product.category,
+          rating: product.rating,
+          thumbnail: product.thumbnail,
+          discountPercentage: product.discountPercentage,
+        })
+      );
+    toast.success("item added to cart successfully", {
+      duration: 3000,
     });
   };
 
   const buyNow = () => {
-    requireAuth(() => {
-      if (product)
-        dispatch(
-          addToCart({
-            id: product.id,
-            price: product.price,
-            title: product.title,
-            category: product.category,
-            rating: product.rating,
-            thumbnail: product.thumbnail,
-            discountPercentage: product.discountPercentage,
-          })
-        );
-      dispatch(setCartState(true));
-    });
+    if (product)
+      dispatch(
+        addToCart({
+          id: product.id,
+          price: product.price,
+          title: product.title,
+          category: product.category,
+          rating: product.rating,
+          thumbnail: product.thumbnail,
+          discountPercentage: product.discountPercentage,
+        })
+      );
+    dispatch(setCartState(true));
   };
 
   const addWishlist = () => {
-    requireAuth(() => {
-      if (product) {
-        dispatch(addToWishlist(product));
-        toast.success("item added to your wishlist", {
-          duration: 3000,
-        });
-      }
-    });
+    if (product) {
+      dispatch(addToWishlist(product));
+      toast.success("item added to your wishlist", {
+        duration: 3000,
+      });
+    }
   };
 
   return (
